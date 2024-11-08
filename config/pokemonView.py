@@ -1,8 +1,12 @@
 import discord
-import requests
 import os
+from dotenv import load_dotenv
+import requests
 
+# Load environment variables
+load_dotenv()
 
+# Map to generate region names dynamically based on generation
 GENERATION_REGION_MAP = {
     "generation-i": "Kanto",
     "generation-ii": "Johto",
@@ -14,6 +18,12 @@ GENERATION_REGION_MAP = {
     "generation-viii": "Galar",
     "generation-ix": "Paldea"
 }
+
+# Dynamically fetch type emojis
+TYPE_EMOJI_MAP = {key: os.getenv(f"{key.upper()}_TYPE_EMOJI", "") for key in [
+    "electric", "fire", "water", "grass", "psychic", "rock", "ghost", "normal",
+    "fairy", "dark", "dragon", "ice", "steel", "fighting", "bug", "poison", "flying", "ground"
+]}
 
 def create_pokemon_embed(pokemon_data):
     general_data, species_data = pokemon_data["general"], pokemon_data["species"]
@@ -59,28 +69,7 @@ def create_pokemon_embed(pokemon_data):
     
     embed.add_field(name="Evolution", value="\n".join(evolution_chain), inline=False)
     
-    type_emoji_map = {
-        "electric": os.getenv("ELECTRIC_TYPE_EMOJI"),
-        "fire": os.getenv("FIRE_TYPE_EMOJI"),
-        "water": os.getenv("WATER_TYPE_EMOJI"),
-        "grass": os.getenv("GRASS_TYPE_EMOJI"),
-        "psychic": os.getenv("PSYCHIC_TYPE_EMOJI"),
-        "rock": os.getenv("ROCK_TYPE_EMOJI"),
-        "ghost": os.getenv("GHOST_TYPE_EMOJI"),
-        "normal": os.getenv("NORMAL_TYPE_EMOJI"),
-        "fairy": os.getenv("FAIRY_TYPE_EMOJI"),
-        "dark": os.getenv("DARK_TYPE_EMOJI"),
-        "dragon": os.getenv("DRAGON_TYPE_EMOJI"),
-        "ice": os.getenv("ICE_TYPE_EMOJI"),
-        "steel": os.getenv("STEEL_TYPE_EMOJI"),
-        "fighting": os.getenv("FIGHTING_TYPE_EMOJI"),
-        "bug": os.getenv("BUG_TYPE_EMOJI"),
-        "poison": os.getenv("POISON_TYPE_EMOJI"),
-        "flying": os.getenv("FLYING_TYPE_EMOJI"),
-        "ground": os.getenv("GROUND_TYPE_EMOJI")
-    }
-    
-    type_emoji = " ".join([type_emoji_map.get(t, "") for t in types])
+    type_emoji = " ".join([TYPE_EMOJI_MAP.get(t, "") for t in types])
 
     embed.add_field(name="Types", value=type_emoji, inline=True)
     
