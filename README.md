@@ -8,15 +8,10 @@ discord_bot_project/
 ├── config/
 │   ├── connectDB.py
 │   └── pokemonView.py
+│   └── usercontrol.py
 │
 └── conviction/
     ├── pokeDex.py
     └── register.py
+    └── market.py
 ```
-
-
-
-
-
-
-
