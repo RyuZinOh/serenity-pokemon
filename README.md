@@ -1,6 +1,6 @@
 ### How Did I Create This Image?
 
-Well, I’m not ashamed to admit it but I've been reusing the same concept everywhere, because who needs to create something new when you can just keep recycling the same thing over and over like a sad, creatively bankrupt ghost? Here’s how I did it (if you really want to know, but I’m not sure why you’d care):
+Well, I’m not ashamed to admit it but I've been reusing the same concept everywhere like here: [image porcessor](https://github.com/RyuZinOh/image-processor), [my oldest project](https://github.com/RyuZinOh/Expertise)and yea [mimic projetc for a BCA group](https://github.com/RyuZinOh/BCA-Group) because who needs to create something new when you can just keep recycling the same thing over and over like a sad, creatively bankrupt ghost? Here’s how I did it (if you really want to know, but I’m not sure why you’d care):
 
 1. **Canvas Creation**: First, I made a canvas that’s 1440x920 pixels. Why that size? I have no idea, but it seemed decent enough to make something that *might* look good. I used the `Pillow` module, so yeah, a fancy Python library that I barely understand, but it got the job done. I swear, even my coding has an existential crisis.
 
