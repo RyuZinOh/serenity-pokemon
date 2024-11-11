@@ -9,6 +9,8 @@ from conviction.market import create_market_embed, buy_redeem, view_redeem
 from config.connectDB import db_instance
 from config.usercontrol import redeem, catch, p, info
 import random
+from conviction.profile import generate_profile
+
 
 load_dotenv()
 
@@ -138,194 +140,11 @@ async def pokemon_command(ctx):
 async def info_command(ctx, poke_id: int):
     await info(ctx, poke_id)
 
-# def generate_random_ivs():
-#     return {stat: random.randint(0, 31) for stat in ["hp", "attack", "defense", "special_attack", "special_defense", "speed"]}
-
-# # @bot.command(name="redeem")
-# # async def redeem(ctx, pokemon_name):
-# #     try:
-# #         if not await check_registration(ctx):
-# #             return
-        
-# #         users_collection = db_instance.get_users_collection()
-# #         user_data = users_collection.find_one({"user_id": ctx.author.id})
-        
-# #         if not user_data or user_data.get("redeems", 0) <= 0:
-# #             await ctx.send("You don't have any redeems left. Please buy a redeem from the market!")
-# #             return
-
-# #         pokemon_data = fetch_pokemon_data(pokemon_name)
-
-# #         if pokemon_data:
-# #             general_data = pokemon_data["general"]
-            
-# #             name = general_data["name"].capitalize()
-# #             types = [t["type"]["name"] for t in general_data["types"]]
-# #             height, weight = general_data["height"] / 10, general_data["weight"] / 10
-# #             sprite = general_data["sprites"]["other"]["official-artwork"]["front_default"]
-            
-# #             embed = discord.Embed(
-# #                 title=f"Wild {name} Appeared!",
-# #                 description=f"A wild **{name}** has appeared! 🎉",
-# #                 color=discord.Color.green()
-# #             )
-            
-# #             embed.add_field(name="Types", value=" ".join(types), inline=True)
-# #             embed.add_field(name="Height", value=f"{height} m", inline=True)
-# #             embed.add_field(name="Weight", value=f"{weight} kg", inline=True)
-# #             embed.set_image(url=sprite)
-
-# #             await ctx.send(embed=embed)
-            
-# #             redeemed_pokemon[ctx.author.id] = {
-# #                 "name": name,
-# #                 "types": types,
-# #                 "sprite": sprite,
-# #                 "iv": generate_random_ivs()
-# #             }
-
-# #             users_collection.update_one({"user_id": ctx.author.id}, {"$inc": {"redeems": -1}})
-# #         else:
-# #             await ctx.send("Pokémon not found!")
-# #     except Exception as e:
-# #         await ctx.send(f"An error occurred while redeeming the Pokémon: {e}")
-# #         print(f"Error redeeming Pokémon: {e}")
-
-# # @bot.command(name="catch")
-# # async def catch(ctx, pokemon_name: str):
-# #     try:
-# #         # Check if the user has a redeemed Pokémon to catch
-# #         if ctx.author.id not in redeemed_pokemon:
-# #             await ctx.send("You haven't redeemed any Pokémon yet! Please redeem one first using !redeem.")
-# #             return
-        
-# #         # Get the spawned Pokémon from memory
-# #         pokemon = redeemed_pokemon[ctx.author.id]
-# #         correct_pokemon_name = pokemon["name"].lower()
-
-# #         # Check if the user entered the correct Pokémon name
-# #         if pokemon_name.lower() != correct_pokemon_name:
-# #             await ctx.send(f"Oops! The Pokémon name is incorrect. The correct name is **{correct_pokemon_name.capitalize()}**.")
-# #             return
-        
-# #         # Add the Pokémon to the user's inventory in the database
-# #         users_collection = db_instance.get_users_collection()
-# #         user_data = users_collection.find_one({"user_id": ctx.author.id})
-        
-# #         if user_data:
-# #             # Add Pokémon to the inventory
-# #             caught_pokemon = {
-# #                 "name": pokemon["name"],
-# #                 "types": pokemon["types"],
-# #                 "sprite": pokemon["sprite"],
-# #                 "iv": pokemon["iv"]
-# #             }
-            
-# #             # Update user's Pokémon collection (inventory)
-# #             users_collection.update_one(
-# #                 {"user_id": ctx.author.id},
-# #                 {"$push": {"inventory": caught_pokemon}}
-# #             )
-
-# #             # Remove the redeemed Pokémon from memory
-# #             del redeemed_pokemon[ctx.author.id]
-
-# #             # Notify the user
-# #             await ctx.send(f"Congratulations {ctx.author.name}! You caught **{pokemon['name']}**! 🎉")
-# #         else:
-# #             await ctx.send("User data not found in the database.")
-# #     except Exception as e:
-# #         await ctx.send(f"An error occurred while catching the Pokémon: {e}")
-# #         print(f"Error catching Pokémon: {e}")
 
 
-# # @bot.command(name="p")
-# # async def pokemon(ctx):
-# #     try:
-# #         user_data = await get_user_data(ctx.author.id)
-# #         if not user_data:
-# #             await ctx.send(f"Hi {ctx.author.name}, you don't have any Pokémon in your inventory yet!")
-# #             return
-        
-# #         inventory = user_data.get("inventory", [])
-# #         if not inventory:
-# #             await ctx.send(f"Your Pokémon inventory is empty, {ctx.author.name}.")
-# #             return
-        
-# #         embed = discord.Embed(title=f"{ctx.author.name}'s Pokémon Inventory", color=discord.Color.blue())
-# #         embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar.url)
-
-# #         for idx, pokemon in enumerate(inventory):
-# #             name = pokemon["name"]
-# #             ivs = pokemon["iv"]
-# #             total_iv_percent = calculate_iv_percentage(ivs)
-# #             embed.add_field(
-# #                 name=f"{idx+1}. {name} - {total_iv_percent}% Total IV",
-# #                 value=f"ID: {idx+1}", inline=False
-# #             )
-        
-# #         await ctx.send(embed=embed)
-# #     except Exception as e:
-# #         await ctx.send("Oops! Something went wrong while fetching your inventory.")
-# #         print(f"Error fetching inventory for user {ctx.author.id}: {e}")
-
-# # async def get_user_data(user_id):
-# #     try:
-# #         users_collection = db_instance.get_users_collection()
-# #         return users_collection.find_one({"user_id": user_id})
-# #     except Exception as e:
-# #         print(f"Error fetching user data for {user_id}: {e}")
-# #         return None
-
-# # def calculate_iv_percentage(ivs):
-# #     total_iv = sum(ivs.values())
-# #     return round((total_iv / 186) * 100, 2)
-
-# # @bot.command(name="info")
-# # async def info(ctx, poke_id: int):
-# #     try:
-# #         user_data = await get_user_data(ctx.author.id)
-# #         if not user_data:
-# #             await ctx.send(f"Hi {ctx.author.name}, you don't have any Pokémon in your inventory yet!")
-# #             return
-        
-# #         inventory = user_data.get("inventory", [])
-# #         if not inventory:
-# #             await ctx.send(f"Your Pokémon inventory is empty, {ctx.author.name}.")
-# #             return
-
-# #         if poke_id < 1 or poke_id > len(inventory):
-# #             await ctx.send(f"Oops! Invalid Pokémon ID. Please provide a valid number from 1 to {len(inventory)}.")
-# #             return
-        
-# #         pokemon = inventory[poke_id - 1]
-# #         name = pokemon["name"]
-# #         ivs = pokemon["iv"]
-# #         sprite = pokemon["sprite"]
-# #         types = pokemon.get("types", [])
-        
-# #         total_iv_percent = calculate_iv_percentage(ivs)
-
-# #         ivs_field = "\n".join([f"{stat.capitalize()}: {ivs[stat]}/31" for stat in ivs])
-
-# #         types_field = ", ".join(types) if types else "Unknown"
-        
-# #         embed = discord.Embed(title=f"{name} - Pokémon Stats", color=discord.Color.green())
-# #         embed.set_image(url=sprite)
-# #         embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar.url)
-
-# #         embed.add_field(name="Types", value=types_field, inline=False)
-# #         embed.add_field(name="IVs", value=ivs_field, inline=False)
-# #         embed.add_field(name="Total IV%", value=f"{total_iv_percent}%", inline=False)
-
-# #         # Setting the user's avatar as a larger image on the right side
-# #         embed.set_thumbnail(url=ctx.author.avatar.url)
-
-# #         await ctx.send(embed=embed)
-# #     except Exception as e:
-# #         await ctx.send("Oops! Something went wrong while fetching Pokémon info.")
-# #         print(f"Error fetching info for user {ctx.author.id}: {e}")
-
-
-
+@bot.command()
+async def profile(ctx):
+    profile_image = await generate_profile(ctx)
+    if profile_image:
+        await ctx.send(file=profile_image)
 bot.run(TOKEN)
