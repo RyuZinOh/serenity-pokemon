@@ -50,8 +50,8 @@ async def generate_profile(ctx):
     # Font setup
     font_big = ImageFont.truetype("arial.ttf", 50)
     font_small = ImageFont.truetype("arial.ttf", 30)
-    text_x_offset = 50 + 250 + 20
-    text_y_offset = avatar_top_y
+    text_x_offset = 50 
+    text_y_offset = avatar_top_y +250
 
     # Draw Username, Pokémon Count
     draw = ImageDraw.Draw(img)
