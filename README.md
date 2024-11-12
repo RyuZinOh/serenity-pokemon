@@ -31,7 +31,7 @@ And here’s the demo, though honestly, I’m not sure why you want to see this:
 
 | Profile Image | Description |
 |:-------------:|-------------|
-| ![Profile Demo](./assets/demo_profile.png) | This image shows the “masterpiece” I created. The avatar’s placed by some divine mistake, and the text is there because it has to be. I promise, I’m not overthinking itmuch. |
+| ![Profile Demo](./assets/demo_pp.png) | This image shows the “masterpiece” I created. The avatar’s placed by some divine mistake, and the text is there because it has to be. I promise, I’m not overthinking itmuch. |
 
 ---
 
