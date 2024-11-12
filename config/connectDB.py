@@ -5,9 +5,13 @@ class MongoDB:
         self.client = MongoClient(uri)
         self.db = self.client[db_name]
         self.users_collection = self.db["users"]
+        self.banners_collection = self.db["banners"]  
     
     def get_users_collection(self):
         return self.users_collection
+    
+    def get_banners_collection(self):
+        return self.banners_collection 
 
 # Global database instance
 db_instance = MongoDB()
