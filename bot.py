@@ -13,14 +13,11 @@ from conviction.profile import generate_profile
 
 
 load_dotenv()
-
-SERENE_COIN = os.getenv("SERENE_COIN")
-SPECTRA_COIN = os.getenv("SPECTRA_COIN")
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix=commands.when_mentioned_or("!"), intents=intents, case_insensitive=True)
 
 @bot.event
 async def on_ready():
@@ -52,14 +49,15 @@ async def balance(ctx):
             return
         
         embed = discord.Embed(title=f"{ctx.author.name}'s Balance", color=discord.Color.blue())
-        embed.add_field(name="Serene", value=f"{serene} {SERENE_COIN}", inline=False)
-        embed.add_field(name="Spectra", value=f"{spectra} {SPECTRA_COIN}", inline=False)
+        embed.add_field(name="Serene", value=f"{serene}", inline=True)
+        embed.add_field(name="Spectra", value=f"{spectra}", inline=True)
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
         await ctx.send(embed=embed)
     except Exception as e:
         await ctx.send(f"An error occurred while fetching your balance: {e}")
         print(f"Error fetching balance for user {ctx.author.id}: {e}")
+
 
 @bot.command(name="dex")
 async def dex(ctx, pokemon_name):
@@ -107,7 +105,7 @@ async def market(ctx):
 
 @bot.command(name="buy")
 async def buy(ctx, item: str, amount: int = 1):
-    if item.lower() == "redeem":
+    if item == "redeem":
         await buy_redeem(ctx, amount)
     else:
         await ctx.send("Invalid item. Only 'redeem' is available for purchase at the moment.")
@@ -121,8 +119,6 @@ async def viewredeem(ctx):
         print(f"Error fetching Redeem count for user {ctx.author.id}: {e}")
 
 redeemed_pokemon = {}
-
-
 
 @bot.command(name="redeem")
 async def redeem_command(ctx, pokemon_name):
@@ -140,11 +136,10 @@ async def pokemon_command(ctx):
 async def info_command(ctx, poke_id: int):
     await info(ctx, poke_id)
 
-
-
 @bot.command()
 async def profile(ctx):
     profile_image = await generate_profile(ctx)
     if profile_image:
         await ctx.send(file=profile_image)
+
 bot.run(TOKEN)

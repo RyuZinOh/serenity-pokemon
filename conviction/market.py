@@ -6,22 +6,23 @@ from config.connectDB import db_instance
 #---------
 def create_market_embed():
     items = {
-        "Redeem": "20000 Spectra Coins",
-        "Incense": "5000 Serene Coins"
+        "Redeem": "20,000 Spectra Coins",
+        "Incense": "5,000 Serene Coins"
     }
 
     embed = discord.Embed(
-        title="Market",
-        description="Welcome to the market! Here are the available items for purchase:",
+        title="Marketplace",
+        description="Explore our offerings below. Select your items with ease!",
         color=discord.Color.gold()
     )
 
     for item, price in items.items():
-        embed.add_field(name=item, value=f"Cost: {price}", inline=False)
+        embed.add_field(name=item, value=f"Price: {price}", inline=False)
 
-    embed.set_footer(text="Use the respective commands to purchase items.")
+    embed.set_footer(text="Use the respective commands to complete your purchase.")
     
     return embed
+
 
 
 #---------
@@ -84,7 +85,7 @@ async def view_redeem(ctx):
         color=discord.Color.blue()
     )
     
-    embed.add_field(name="\u200B", value="\u200B")
+    embed.set_thumbnail(url=ctx.author.avatar.url)
     embed.set_footer(text="- Serving you the best!", icon_url=ctx.author.avatar.url)
 
     await ctx.send(embed=embed)

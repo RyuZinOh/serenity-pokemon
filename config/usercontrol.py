@@ -4,6 +4,8 @@ from conviction.pokeDex import fetch_pokemon_data
 from conviction.market import buy_redeem, view_redeem
 from conviction.register import get_user_balance, is_user_registered
 import random
+from PIL import Image, ImageDraw, ImageFont
+import textwrap
 
 #-------------
 # Function to generate random IVs for redeemed Pokémon
@@ -167,17 +169,20 @@ async def p(ctx):
             await ctx.send(f"Your Pokémon inventory is empty, {ctx.author.name}.")
             return
         
-        embed = discord.Embed(title=f"{ctx.author.name}'s Pokémon Inventory", color=discord.Color.blue())
+       
+        embed = discord.Embed(title="YOUR POKEMONS", color=discord.Color.blue())
         embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar.url)
-
-        for idx, pokemon in enumerate(inventory):
+        embed.set_thumbnail(url=ctx.author.avatar.url)
+        
+        # here is a spaceing so defualt spaing like spacebar spac nah, its a discord black letter as a space to create spacing
+        fields = []
+        for idx, pokemon in enumerate(inventory, start=1):
             name = pokemon["name"]
             ivs = pokemon["iv"]
             total_iv_percent = calculate_iv_percentage(ivs)
-            embed.add_field(
-                name=f"{idx+1}. {name} - {total_iv_percent}% Total IV",
-                value=f"ID: {idx+1}", inline=False
-            )
+            fields.append(f"{idx}　{name}　•　{total_iv_percent}%")
+
+        embed.add_field(name="\n".join(fields), value="\u200b", inline=False)
         
         await ctx.send(embed=embed)
     except Exception as e:
