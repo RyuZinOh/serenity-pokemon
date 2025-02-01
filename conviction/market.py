@@ -1,6 +1,8 @@
+import math
+import requests
 import discord
 from config.connectDB import db_instance
-from discord.ui import Select, View
+from discord.ui import Select, View, Button
 
 #---------
 # Creates the market embed to display available items and their costs
@@ -93,34 +95,100 @@ async def view_redeem(ctx):
 
 
 
-#---------
-# Displays another store with a dropdown menu and an image
-#---------
-async def view_other_store(ctx):
-    class StoreDropdown(Select):
-        def __init__(self):
-            options = [
-                discord.SelectOption(label="Background", description="Browse available backgrounds."),
-                discord.SelectOption(label="Cards", description="Check out unique card designs."),
-                discord.SelectOption(label="Titles", description="Discover custom titles.")
-            ]
-            super().__init__(placeholder="Select a category...", options=options)
 
-        async def callback(self, interaction: discord.Interaction):
+# Fetch titles data from GitHub
+def fetch_titles_data():
+    url = 'https://raw.githubusercontent.com/RyuZinOh/static-assets/main/titles.json'
+    response = requests.get(url)
+    return response.json() if response.status_code == 200 else None
+
+# Store Dropdown for Categories
+class StoreDropdown(discord.ui.Select):
+    def __init__(self, ctx):
+        self.ctx = ctx
+        options = [
+            discord.SelectOption(label="Background", description="Browse backgrounds."),
+            discord.SelectOption(label="Cards", description="View unique cards."),
+            discord.SelectOption(label="Titles", description="Explore custom titles.")
+        ]
+        super().__init__(placeholder="Select a category...", options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        if self.values[0] == "Titles":
+            titles_data = fetch_titles_data()
+            if titles_data:
+                await show_titles_page(interaction, titles_data, page=1)
+            else:
+                await interaction.response.send_message("Failed to load titles data.", ephemeral=True)
+        else:
             await interaction.response.send_message(f"You selected: {self.values[0]}", ephemeral=True)
 
-    view = View()
-    view.add_item(StoreDropdown())
-
+# Command to View the Store
+async def view_other_store(ctx):
+    view = discord.ui.View()
+    view.add_item(StoreDropdown(ctx))
     embed = discord.Embed(
         title="Exclusive Store",
-        description="Explore our premium selections below!",
+        description="Explore premium selections below!",
         color=discord.Color.purple()
     )
-
-    file = discord.File("assets/dash_shop.png", filename="store_banner.png")  
-    embed.set_image(url="attachment://store_banner.png") 
-
+    embed.set_image(url="attachment://store_banner.png")
     embed.set_footer(text="Select a category from the dropdown to proceed.")
+    await ctx.send(embed=embed, file=discord.File("assets/dash_shop.png", filename="store_banner.png"), view=view)
 
-    await ctx.send(embed=embed, file=file, view=view)
+
+
+
+#titles
+async def show_titles_page(interaction, titles_data, page):
+    per_page = 10 
+    total_pages = math.ceil(len(titles_data) / per_page)
+    start, end = (page - 1) * per_page, page * per_page
+    title_items = list(titles_data.items())[start:end]
+
+    embed = discord.Embed(
+        title=f"Titles Store (Page {page}/{total_pages})",
+        color=discord.Color.blue()
+    )
+    
+    embed.description = "Browse available titles and select one from the dropdown."
+
+    for title_id, (name, price) in title_items:
+        embed.add_field(name=f"**{name}**", value=f"`ID: {title_id}` | `{price} Spectra`", inline=False)
+
+    view = discord.ui.View()
+    view.add_item(TitlesPageDropdown(titles_data, page, total_pages))
+    
+    if page > 1:
+        view.add_item(PageButton("◀️", titles_data, page - 1))
+    if page < total_pages:
+        view.add_item(PageButton("▶️", titles_data, page + 1))
+
+    await interaction.response.edit_message(embed=embed, view=view)
+
+class TitlesPageDropdown(discord.ui.Select):
+    def __init__(self, titles_data, page, total_pages):
+        per_page = 10  
+        start, end = (page - 1) * per_page, page * per_page
+        options = [
+            discord.SelectOption(label=name, description=f"Price: {price} Spectra")
+            for _, (name, price) in list(titles_data.items())[start:end]
+        ]
+        super().__init__(placeholder="Select a title...", options=options)
+        self.titles_data = titles_data
+
+    async def callback(self, interaction: discord.Interaction):
+        selected_title = self.values[0]
+        price = next(price for _, (name, price) in self.titles_data.items() if name == selected_title)
+        await interaction.response.send_message(f"**Title:** {selected_title}\n**Price:** {price} Spectra", ephemeral=True)
+
+class PageButton(discord.ui.Button):
+    def __init__(self, emoji, titles_data, new_page):
+        super().__init__(style=discord.ButtonStyle.primary, emoji=emoji)
+        self.titles_data, self.new_page = titles_data, new_page
+
+    async def callback(self, interaction: discord.Interaction):
+        await show_titles_page(interaction, self.titles_data, self.new_page)
+
+
+
