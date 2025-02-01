@@ -3,6 +3,7 @@ import requests
 import discord
 from config.connectDB import db_instance
 from discord.ui import Select, View, Button
+import os
 
 #---------
 # Creates the market embed to display available items and their costs
@@ -96,10 +97,13 @@ async def view_redeem(ctx):
 
 
 
-# Fetch titles data from GitHub
+# collecting titles api instead from .env
 def fetch_titles_data():
-    url = 'https://raw.githubusercontent.com/RyuZinOh/static-assets/main/titles.json'
-    response = requests.get(url)
+    titles_api_url = os.getenv("TITLES_API")  
+    if not titles_api_url:
+        raise ValueError("TITLES_API environment variable is not set.")
+    
+    response = requests.get(titles_api_url)
     return response.json() if response.status_code == 200 else None
 
 # Store Dropdown for Categories
