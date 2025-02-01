@@ -5,11 +5,12 @@ from discord.ext import commands
 from conviction.register import register_user, is_user_registered, get_user_balance
 from conviction.pokeDex import fetch_pokemon_data
 from config.pokemonView import create_pokemon_embed
-from conviction.market import create_market_embed, buy_redeem, view_redeem
+from conviction.market import create_market_embed, buy_redeem, view_redeem, view_other_store
 from config.connectDB import db_instance
 from config.usercontrol import redeem, catch, p, info
 import random
 from conviction.profile import generate_profile
+
 
 
 load_dotenv()
@@ -141,5 +142,18 @@ async def profile(ctx):
     profile_image = await generate_profile(ctx)
     if profile_image:
         await ctx.send(file=profile_image)
+
+
+@bot.command(name="store")
+async def store(ctx):
+    try:
+        await view_other_store(ctx)
+    except Exception as e:
+        await ctx.send(f"An error occurred while opening the store: {e}")
+        print(f"Error opening store: {e}")
+
+
+
+        
 
 bot.run(TOKEN)

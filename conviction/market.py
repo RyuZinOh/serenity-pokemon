@@ -1,5 +1,6 @@
 import discord
 from config.connectDB import db_instance
+from discord.ui import Select, View
 
 #---------
 # Creates the market embed to display available items and their costs
@@ -89,3 +90,37 @@ async def view_redeem(ctx):
     embed.set_footer(text="- Serving you the best!", icon_url=ctx.author.avatar.url)
 
     await ctx.send(embed=embed)
+
+
+
+#---------
+# Displays another store with a dropdown menu and an image
+#---------
+async def view_other_store(ctx):
+    class StoreDropdown(Select):
+        def __init__(self):
+            options = [
+                discord.SelectOption(label="Background", description="Browse available backgrounds."),
+                discord.SelectOption(label="Cards", description="Check out unique card designs."),
+                discord.SelectOption(label="Titles", description="Discover custom titles.")
+            ]
+            super().__init__(placeholder="Select a category...", options=options)
+
+        async def callback(self, interaction: discord.Interaction):
+            await interaction.response.send_message(f"You selected: {self.values[0]}", ephemeral=True)
+
+    view = View()
+    view.add_item(StoreDropdown())
+
+    embed = discord.Embed(
+        title="Exclusive Store",
+        description="Explore our premium selections below!",
+        color=discord.Color.purple()
+    )
+
+    file = discord.File("assets/dash_shop.png", filename="store_banner.png")  
+    embed.set_image(url="attachment://store_banner.png") 
+
+    embed.set_footer(text="Select a category from the dropdown to proceed.")
+
+    await ctx.send(embed=embed, file=file, view=view)
