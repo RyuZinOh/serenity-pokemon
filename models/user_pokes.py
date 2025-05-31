@@ -15,11 +15,11 @@ class UserPokeModel:
         return self.collection.insert_one(store_data)
     
     def add_pokemon(self, discord_id, pokemon_data):
-        fields = {"name", "leverl", "stats"}
+        fields = {"name", "level", "stats"}
         stats = {
             "hp",
             "attack",
-            "speical_attack",
+            "special_attack",
             "defense",
             "special_defense",
             "speed"
@@ -38,7 +38,7 @@ class UserPokeModel:
             {
                 "$push":{"pokemons":pokemon_data},
                 "$set":{"last_updated": datetime.now(timezone.utc)}
-             }
+            },upsert=True
         )
     
     
