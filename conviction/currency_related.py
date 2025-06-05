@@ -1,7 +1,8 @@
 from discord.ext import commands
 from models.currency import CurrencyModel
 from utils.helper.checks import is_registered
-
+from discord import Embed
+import discord
 vault = CurrencyModel()
 
 @commands.command(name="vault")
@@ -13,8 +14,19 @@ async def show_vault(ctx):
     if user_data:
         spectra = user_data.get("spectra_coin")
         sera   = user_data.get("sera_token")
+
+        embed = Embed(
+            color= discord.Color.red()
+        )
+        embed.add_field(name="Spectra Coin", value=f"{spectra}", inline=False)
+        embed.add_field(name="Sera Token", value=f"{sera}", inline=False)
+
+        embed.set_thumbnail(url=ctx.author.avatar.url)
+
+
+
         await ctx.send(
-            f"{ctx.author.name}-> Spectra coin: {spectra}-> Sera Token:{sera}"
+            embed= embed
         )
     else:
         await ctx.send("User Vault not found. You might want to register.")    

@@ -10,7 +10,7 @@ from models.user_pokes import UserPokeModel
 from models.currency import CurrencyModel
 
 load_dotenv()
-
+OAURL = os.getenv("POKEMON_ART_URL")
 P_A_B = os.getenv("POKEMON_API")
 
 
@@ -46,7 +46,7 @@ async def spawn_pokemon(ctx):
 
                 name = data["name"].capitalize()
                 stats_raw = {stat["stat"]["name"]: stat["base_stat"] for stat in data["stats"]}
-                sprite_url = data["sprites"]["front_default"]
+                image_url = f"{OAURL}/{pokemon_id}.png"
 
                 def generate_iv():
                     return random.randint(0,31)
@@ -78,7 +78,7 @@ async def spawn_pokemon(ctx):
 
                 await ctx.send(
                     f"{ctx.author.mention}!",
-                    embed = create_pokemon_embed(name, sprite_url, cleaned_stats)
+                    embed = create_pokemon_embed(ctx, name, image_url, cleaned_stats)
                 )
 
     except Exception as e:
@@ -88,16 +88,18 @@ async def spawn_pokemon(ctx):
 
 
 #creating embed to show user
-def create_pokemon_embed(name, image_url, stats):
+def create_pokemon_embed(ctx,name, image_url, stats):
     embed = discord.Embed(
         title=f"you caught a {name}!",
         color=discord.Color.red()
     )
-    stat_text = "\n".join(f"**{k.replace('_', ' ').title()}**: {v}" for k, v in stats.items())
-    embed.add_field(name="Stats (IVs)", value=stat_text, inline=False)
+    stat_text = "\n".join(f"**{k.replace('_', ' ').title()}:** IV - {v}/31" for k, v in stats.items())
+    embed.add_field(name="Stats" , value=stat_text, inline=False)
+    embed.set_thumbnail(url=ctx.author.avatar.url)
+    
 
     if image_url:
-        embed.set_thumbnail(url=image_url)
+        embed.set_image(url=image_url)
     return embed
 
 
