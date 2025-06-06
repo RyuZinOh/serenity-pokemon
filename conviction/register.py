@@ -2,12 +2,13 @@ from models.user import UserModel
 from models.currency import CurrencyModel
 from discord.ext import commands
 from models.user_pokes import UserPokeModel
-
+from utils.helper.decoraters import typing_effect
 u_model = UserModel()
 vault = CurrencyModel()
 u_ps = UserPokeModel()
 
 @commands.command(name="register")
+@typing_effect
 async def register_user(ctx):
     disc_id = ctx.author.id
     username = ctx.author.name

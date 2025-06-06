@@ -3,10 +3,13 @@ from models.currency import CurrencyModel
 from utils.helper.checks import is_registered
 from discord import Embed
 import discord
+from utils.helper.decoraters import typing_effect
+
 vault = CurrencyModel()
 
 @commands.command(name="vault")
 @is_registered()
+@typing_effect
 async def show_vault(ctx):
     disc_id = str(ctx.author.id)
     user_data = vault.collection.find_one({"discord_id":disc_id})
