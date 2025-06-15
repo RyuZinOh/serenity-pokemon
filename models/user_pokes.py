@@ -15,7 +15,7 @@ class UserPokeModel:
         return self.collection.insert_one(store_data)
     
     def add_pokemon(self, discord_id, pokemon_data):
-        fields = {"name", "level", "stats"}
+        fields = {"name", "level", "xp","stats"}
         stats = {
             "hp",
             "attack",
@@ -28,6 +28,9 @@ class UserPokeModel:
             raise ValueError("Missing required Fields.")
         if not stats.issubset(pokemon_data["stats"]):
             raise ValueError("Incomplete stats.")
+        
+        if not isinstance(pokemon_data["xp"],(int, float) or pokemon_data["xp"]<0):
+            raise ValueError("xp must be a non-negative number.")
         
         pokemon_data["caught_at"] = datetime.now(timezone.utc)
 
