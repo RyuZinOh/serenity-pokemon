@@ -68,6 +68,7 @@ async def spawn_pokemon(ctx):
                 pokemon_data = {
                     "name": name,
                     "level":1,
+                    "xp" : 0,
                     "stats" : cleaned_stats   
                 }
 
