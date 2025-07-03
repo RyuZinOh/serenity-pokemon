@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from conviction.register import register_user   
 from conviction.currency_related import show_vault
-from conviction.poke_spawner import spawn_pokemon, dex_pokemon
+from conviction.poke_spawner import spawn_pokemon, dex_pokemon, view_my_pokemon
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -36,9 +36,12 @@ bot.add_command(show_vault)
 bot.add_command(spawn_pokemon)
 
 
+
+
 #dexing/viewing pokemon
 bot.add_command(dex_pokemon)
-
+#viewing user pokemon
+bot.add_command(view_my_pokemon)
 
 
 

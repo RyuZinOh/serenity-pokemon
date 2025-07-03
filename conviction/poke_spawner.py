@@ -171,6 +171,62 @@ async def dex_pokemon(ctx, *, pokemon_name: str):
                 
 
 
-                
+
+@commands.command(name="p")
+@is_registered()
+@typing_effect
+async def view_my_pokemon(ctx):
+    try:
+        user_data = p_m.collection.find_one({"discord_id": str(ctx.author.id)})
+
+        if not user_data or not user_data.get("pokemons"):
+            await ctx.send("you don't have pokemon! Try catching somehow")
+            return
+        
+        pokemons = user_data["pokemons"]
+
+
+        chunks = []
+        i = 0
+        while i< len(pokemons):
+            chunk = pokemons[i:i+5]
+            chunks.append(chunk)
+            i+=5
+        
+        for page_num, chunk in enumerate(chunks, start=1):
+            embed = discord.Embed(
+                title=f"Your Vault - page {page_num}",
+                color=discord.Color.red()
+                )
+            display = ""
+            for idx, poke in enumerate(chunk, start= 1+ (page_num-1)*5):
+                name = poke["name"]
+                level = poke.get('level')
+                iv_percent = calc_iv_percentage(poke.get("stats", {}))
+                display += f"``{idx}``  {name} •  Lvl.{level}  •  {iv_percent:.2f}%\n"
+            
+            embed.add_field(name="", value=display, inline=False) 
+            embed.set_thumbnail(url=ctx.author.avatar.url)
+            await ctx.send(embed=embed)
+   
+    except Exception as e:
+        await ctx.send(f"Error loading pokemon: {str(e)}")    
+                      
+
+
+
+def calc_iv_percentage(x):
+    total_iv = sum(
+        x.get(stat, 0)for stat in 
+        ["hp", "attack", "special_attack", "defense", "special_defense", "speed"]
+        )
+    max_iv = 31*6
+    if max_iv:
+        return (total_iv/max_iv)*100
+    else:
+        return 0
+
+
+
 
 
